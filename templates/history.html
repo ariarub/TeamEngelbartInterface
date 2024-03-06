@@ -22,29 +22,19 @@
             </select>
             <button type="submit">Submit</button>
         </form>
-    {{call_records}}
         <table>
-            <!-- <thead>
+           <thead>
                 <tr>
-                    <th>Call Date</th>
                     <th>Caller</th>
+                    <th>Call Duration</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for call in call_records %}
-                <tr>
-                    <td>{{ call.callDate }}</td>
-                    <td>{{ call.caller }}</td>
-                </tr>
-                {% endfor %}
-            </tbody> -->
 
             <tbody>
                 {% for call in call_records %}
                 <tr>
-                    <td>{{ call.callDate }}</td>
-                    <td>{{ call.caller }}</td>
-                    <!-- Add other table cells as needed -->
+                    <td>{{ call.callerNumber }}</td>
+                    <td>{{ call.callDurationInSeconds }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
