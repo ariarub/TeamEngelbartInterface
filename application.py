@@ -1,5 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 import pyodbc
 import os
 
@@ -54,6 +55,23 @@ def get_call_records():
         print("Error:", e)
     return rows
 
+def get_calls_for(month):
+    try:
+        conn = pyodbc.connect(connection_string)
+        cursor = conn.cursor()
+        sql_query = f"""
+            SELECT * 
+            FROM callRecords 
+            WHERE MONTH(callStartTimestamp) = ?
+        """
+        cursor.execute(sql_query, (month,))
+        calls = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return calls
+    except pyodbc.Error as e:
+        print("Error:", e)
+        return []
 
 @application.route('/')
 def index():
@@ -72,11 +90,15 @@ def logAReport():
 def viewReports():
     return render_template('viewReport.html')
 
-@application.route('/history')
+@application.route('/history', methods = ['GET', 'POST'])
 def history():
-    call_records = get_call_records()
-    print(call_records)
-    return render_template('history.html', call_records=call_records)
+    if request.method == 'POST':
+        selected_month = int(request.form['month'])
+        calls = get_calls_for(selected_month)
+    else:
+        selected_month = datetime.now().month
+        calls = get_calls_for(selected_month)
+    return render_template('history.html', selected_month=selected_month, calls=calls)
 
 
 if __name__ == '__main__':
