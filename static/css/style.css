@@ -44,7 +44,7 @@ body{
    }
 
    #content {
-    margin-top: 56px; /* Height of the navbar */
+    margin-top: 60px; /* Height of the navbar */
     padding: 20px;
    }
     #navbar {
@@ -118,9 +118,15 @@ body{
     margin-top: 20px;
 }
 
+.table-container {
+    margin-top: 20px;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
+    background-color: #fff; /* Add background color to the table */
+    border-radius: 8px; /* Add border-radius for a smoother appearance */
 }
 
 th, td {
@@ -140,4 +146,18 @@ tr:nth-child(even) {
 
 tr:hover {
     background-color: #ddd; 
+}
+
+button {
+    padding: 8px 12px;
+    background-color: #00685E; /* Lighter background color for buttons */
+    color: #fff;
+    border: none;
+    border-radius: 30px; /* Slightly round the buttons */
+    cursor: pointer;
+    transition: background-color 0.3s, border-radius 0.3s;;
+}
+
+button:hover {
+    background-color: #004f47; /* Darken the background color on hover */
 }

@@ -18,6 +18,7 @@ application = Flask(__name__)
 
 # db = SQLAlchemy(application)
 
+#put this info into an .env file and read it in for security 
 server = 'lexdb-dev.cwxwqmt5bnip.eu-west-2.rds.amazonaws.com'
 database = 'LexIssueData'
 username = 'hilladmin'
@@ -73,6 +74,24 @@ def get_calls_for(month):
         print("Error:", e)
         return []
 
+def get_call_details(callid):
+    try:
+        conn = pyodbc.connect(connection_string)
+        cursor = conn.cursor()
+        sql_query = f"""
+            SELECT * 
+            FROM callRecords 
+            WHERE CallID = ?
+        """
+        cursor.execute(sql_query, (callid))
+        calls = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return calls
+    except pyodbc.Error as e:
+        print("Error:", e)
+        return [] 
+
 @application.route('/')
 def index():
     # return render_template('index.html')
@@ -99,6 +118,11 @@ def history():
         selected_month = datetime.now().month
         calls = get_calls_for(selected_month)
     return render_template('history.html', selected_month=selected_month, calls=calls)
+
+@application.route('/call/<int:CallID>', methods = ['POST'])
+def call_details(CallID):
+    call = get_call_details(CallID)
+    return render_template('callDetails.html', call=call)
 
 
 if __name__ == '__main__':

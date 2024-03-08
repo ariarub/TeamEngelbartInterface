@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard-content px-3 pt-5">
+    <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <body>
+        <h1>Phone Call Details</h1>
+        <p>Call ID: {{ call.CallID }}</p>
+        <p>Call Start: {{ call.callStartTimestamp }}</p>
+        <p>Call End: {{ call.callEndTimestamp }}</p>
+        <p>Call Duration: {{ call.callDurationInSeconds }}</p>
+        <p>Call End: {{ call.logFileName }}</p>
+    </body>
+{% endblock %}

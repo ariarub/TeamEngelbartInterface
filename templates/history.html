@@ -34,6 +34,8 @@
                     <tr>
                         <th>Caller</th>
                         <th>Call Date</th>
+                        <th>Call ID</th>
+                        <th>View Call Details</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,6 +43,8 @@
                     <tr>
                         <td>{{ call.callerNumber}}</td>
                         <td>{{ call.callStartTimestamp }}</td>
+                        <td>{{ call.CallID }}</td>
+                        <td><form action ="/call/{{ call.CallID }}" method = 'post'><button id = 'call' type = 'submit' >View Details </button></form></td>
                     </tr>
                     {% endfor %}
                 </tbody>
