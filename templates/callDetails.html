@@ -3,12 +3,24 @@
 {% block content %}
 <div class="dashboard-content px-3 pt-5">
     <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="call-details">
     <body>
         <h1>Phone Call Details</h1>
+        <div class="call-info">
         <p>Call ID: {{ call.CallID }}</p>
         <p>Call Start: {{ call.callStartTimestamp }}</p>
         <p>Call End: {{ call.callEndTimestamp }}</p>
         <p>Call Duration: {{ call.callDurationInSeconds }}</p>
         <p>Call End: {{ call.logFileName }}</p>
+        </div>
+        <script>
+            function goBack() {
+                window.history.back();
+            }
+        </script>
+        <button class="view-details-btn" onclick="goBack()">Go Back</button>
     </body>
+    </div>
+</div>
+    </div>
 {% endblock %}
