@@ -4,20 +4,11 @@ from datetime import datetime
 import pyodbc
 import os
 import json
+import boto3
 
 application = Flask(__name__)
 
-# db_server = os.environ.get('lexdb-dev.cwxwqmt5bnip.eu-west-2.rds.amazonaws.com')
-# db_username = os.environ.get('hilladmin')
-# db_password = os.environ.get('Fg8peHWvpTZeTxuXHagi')
-# db_port = os.environ.get('1433')
-# db_name = os.environ.get('LexIssueData')
-
-# db_uri = f'mssql+pymssql://{db_username}:{db_password}@{db_server}:{db_port}/{db_name}'
-
-# application.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-
-# db = SQLAlchemy(application)
+s3 = boto3.client('s3')
 
 #put this info into an .env file and read it in for security 
 server = 'lexdb-dev.cwxwqmt5bnip.eu-west-2.rds.amazonaws.com'
@@ -48,8 +39,7 @@ def get_call_records():
         cursor.execute(sql_query)
         rows = cursor.fetchall()
         for row in rows:
-            print(row)  # Assuming you want to print each row
-            
+            print(row) 
         cursor.close()
         conn.close()
         
@@ -95,8 +85,6 @@ def get_call_details(callid):
 
 @application.route('/')
 def index():
-    # return render_template('index.html')
-    # Test database connection
     if test_db_connection():
         return render_template('index.html', connected=True)
     else:
@@ -123,9 +111,9 @@ def history():
 @application.route('/call/<int:CallID>', methods = ['POST'])
 def call_details(CallID):
     call = get_call_details(CallID)
-    #transcript = get_transcript_data(CallID)
-    #print(transcript)
-    return render_template('callDetails.html', call=call)
+    transcript = get_transcript_data(CallID)
+    print(transcript)
+    return render_template('callDetails.html', call=call, transcript = transcript)
 
 def get_transcript_data(CallID):
     try:
@@ -137,19 +125,29 @@ def get_transcript_data(CallID):
             WHERE CallID = ?
         """
         cursor.execute(sql_query, (CallID,))
-        row = cursor.fetchone()
-        if row:
-            log_file_path = row[0]  # Assuming logFileName is the file path
-            with open(log_file_path, 'r') as f:
-                transcript_data = json.load(f)
-            return transcript_data
-        else:
-            print("No transcript found for CallID:", CallID)
-            return None
+        calls = cursor.fetchone()
+        cursor.close()
+        conn.close()
     except pyodbc.Error as e:
         print("Error:", e)
         return None
+    
+    if calls:
+        transcript_filename = calls[0] 
+        bucket_name = 'engelbartchatlogs1'
+        transcript_key = transcript_filename
         
+        try:
+            response = s3.get_object(Bucket=bucket_name, Key=transcript_key)
+            transcript_data = json.loads(response['Body'].read().decode('utf-8'))
+            return transcript_data
+        except Exception as e:
+            print(f"Error retrieving transcript for call {CallID}: {e}")
+            return None
+    else:
+        print(f"No transcript found for call {CallID}")
+        return None
+
 
 if __name__ == '__main__':
     # Run the Flask app
