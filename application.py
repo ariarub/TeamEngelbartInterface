@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import pyodbc
 import os
+import json
 
 application = Flask(__name__)
 
@@ -122,8 +123,33 @@ def history():
 @application.route('/call/<int:CallID>', methods = ['POST'])
 def call_details(CallID):
     call = get_call_details(CallID)
+    #transcript = get_transcript_data(CallID)
+    #print(transcript)
     return render_template('callDetails.html', call=call)
 
+def get_transcript_data(CallID):
+    try:
+        conn = pyodbc.connect(connection_string)
+        cursor = conn.cursor()
+        sql_query = """
+            SELECT logFileName 
+            FROM callRecords 
+            WHERE CallID = ?
+        """
+        cursor.execute(sql_query, (CallID,))
+        row = cursor.fetchone()
+        if row:
+            log_file_path = row[0]  # Assuming logFileName is the file path
+            with open(log_file_path, 'r') as f:
+                transcript_data = json.load(f)
+            return transcript_data
+        else:
+            print("No transcript found for CallID:", CallID)
+            return None
+    except pyodbc.Error as e:
+        print("Error:", e)
+        return None
+        
 
 if __name__ == '__main__':
     # Run the Flask app

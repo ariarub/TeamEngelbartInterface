@@ -214,3 +214,35 @@ button:hover {
         padding: 8px 15px;
     }
 }
+
+
+Copy code
+.form-inline {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px; /* Add some spacing below the form */
+}
+
+.form-control {
+    padding: 8px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.btn {
+    padding: 8px 15px;
+    background-color: #00685E;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: #007bff; /* Change button color to primary */
+}
+
+hr {
+    border-top: 1px solid #ccc;
+    margin-top: 20px; /* Add some spacing above the horizontal rule */
+}

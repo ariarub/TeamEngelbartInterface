@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard-content px-3 pt-5">
+    <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <h1>Transcript for Call {{ transcript_data.CallID }}</h1>
+        <div class="transcript">
+            {% for entry in transcript_data.entries %}
+            <p><strong>{{ entry.speaker }}</strong>: {{ entry.text }}</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

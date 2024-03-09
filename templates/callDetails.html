@@ -7,11 +7,11 @@
     <body>
         <h1>Phone Call Details</h1>
         <div class="call-info">
-        <p>Call ID: {{ call.CallID }}</p>
+        <p>Caller: {{ call.callerNumber }}</p>
         <p>Call Start: {{ call.callStartTimestamp }}</p>
         <p>Call End: {{ call.callEndTimestamp }}</p>
         <p>Call Duration: {{ call.callDurationInSeconds }}</p>
-        <p>Call End: {{ call.logFileName }}</p>
+        <p>Call Transcript: {{ call.logFileName }}</p>
         </div>
         <script>
             function goBack() {
