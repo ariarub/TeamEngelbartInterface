@@ -11,15 +11,17 @@
         <p>Call Start: {{ call.callStartTimestamp }}</p>
         <p>Call End: {{ call.callEndTimestamp }}</p>
         <p>Call Duration: {{ call.callDurationInSeconds }}</p>
-        <p>Call Transcript: {{ call.logFileName }}</p>
         </div>
+        <div class = 'transcript'>
+        <h1>Transcript for Call {{ formatted_transcript|safe }}</h1>
+        </div>
+
         <script>
             function goBack() {
                 window.history.back();
             }
         </script>
         <button class="view-details-btn" onclick="goBack()">Go Back</button>
-        <h1>Transcript for Call {{ transcript }}</h1>
     </body>
     </div>
 </div>

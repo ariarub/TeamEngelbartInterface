@@ -83,37 +83,24 @@ def get_call_details(callid):
         print("Error:", e)
         return [] 
 
-@application.route('/')
-def index():
-    if test_db_connection():
-        return render_template('index.html', connected=True)
-    else:
-        return render_template('logRubbishReport.html', connected=False)
+def format_transcript(transcript):
+    formatted_transcript = ""
+    current_speaker = None
 
-@application.route('/logReport')
-def logAReport():
-    return render_template('logRubbishReport.html')
+    for entry in transcript:
+        speaker = entry['role']
+        content = entry['content']
+        if speaker != current_speaker:
+            if current_speaker is not None:
+                formatted_transcript += "</p>"
+            formatted_transcript += f"<p><strong>{speaker.capitalize()}:</strong> {content}"
+            current_speaker = speaker
+        else:
+            formatted_transcript += f"<br/>{content}"
+    formatted_transcript += "</p>"
 
-@application.route('/viewReport')
-def viewReports():
-    return render_template('viewReport.html')
+    return formatted_transcript
 
-@application.route('/history', methods = ['GET', 'POST'])
-def history():
-    if request.method == 'POST':
-        selected_month = int(request.form['month'])
-        calls = get_calls_for(selected_month)
-    else:
-        selected_month = datetime.now().month
-        calls = get_calls_for(selected_month)
-    return render_template('history.html', selected_month=selected_month, calls=calls)
-
-@application.route('/call/<int:CallID>', methods = ['POST'])
-def call_details(CallID):
-    call = get_call_details(CallID)
-    transcript = get_transcript_data(CallID)
-    print(transcript)
-    return render_template('callDetails.html', call=call, transcript = transcript)
 
 def get_transcript_data(CallID):
     try:
@@ -147,6 +134,47 @@ def get_transcript_data(CallID):
     else:
         print(f"No transcript found for call {CallID}")
         return None
+
+@application.route('/')
+def index():
+    if test_db_connection():
+        return render_template('index.html', connected=True)
+    else:
+        return render_template('logRubbishReport.html', connected=False)
+
+@application.route('/logReport')
+def logAReport():
+    return render_template('logRubbishReport.html')
+
+@application.route('/viewReport')
+def viewReports():
+    return render_template('viewReport.html')
+
+@application.route('/history', methods = ['GET', 'POST'])
+def history():
+    if request.method == 'POST':
+        selected_month = int(request.form['month'])
+        calls = get_calls_for(selected_month)
+    else:
+        selected_month = datetime.now().month
+        calls = get_calls_for(selected_month)
+    return render_template('history.html', selected_month=selected_month, calls=calls)
+
+@application.route('/call/<int:CallID>', methods=['GET', 'POST'])
+def call_details(CallID):
+    call = get_call_details(CallID)
+    transcript = get_transcript_data(CallID)
+    formatted_transcript = ""
+
+    if transcript:
+        if isinstance(transcript, list):
+            formatted_transcript = format_transcript(transcript)
+        else:
+            formatted_transcript = format_transcript(transcript.get('entries', []))
+    
+    return render_template('callDetails.html', call=call, formatted_transcript=formatted_transcript)
+
+
 
 
 if __name__ == '__main__':
