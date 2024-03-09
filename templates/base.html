@@ -25,13 +25,13 @@
             </div>
 
             <ul class="list-unstyled px-2">
-                <li class="active"><a href="{{ url_for('index') }}" class="text-decoration-none px-3 py-2 d-block"><i
+                <li class="{% if page == 'index' %}active{% endif %}"><a href="{{ url_for('index') }}" class="text-decoration-none px-3 py-2 d-block"><i
                             class="fal fa-home"></i> Overview</a></li>
-                <li class=""><a href="{{ url_for('logAReport') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fal fa-list"></i>
+                <li class="{% if page == 'logAReport' %}active{% endif %}"><a href="{{ url_for('logAReport') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fal fa-list"></i>
                         Log a Report</a></li>
-                <li class=""><a href="{{ url_for('viewReports') }}" class="text-decoration-none px-3 py-2 d-block"><i
+                <li class="{% if page == 'viewReports' %}active{% endif %}"><a href="{{ url_for('viewReports') }}" class="text-decoration-none px-3 py-2 d-block"><i
                             class="fal fa-envelope-open-text"></i> View all reports</a></li>
-                <li class=""><a href="{{ url_for('history') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fal fa-users"></i>
+                <li class="{% if page == 'history' %}active{% endif %}"><a href="{{ url_for('history') }}" class="text-decoration-none px-3 py-2 d-block"><i class="fal fa-users"></i>
                         History</a></li>
             </ul>
             <hr class="h-color mx-2">

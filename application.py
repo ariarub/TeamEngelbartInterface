@@ -138,17 +138,17 @@ def get_transcript_data(CallID):
 @application.route('/')
 def index():
     if test_db_connection():
-        return render_template('index.html', connected=True)
+        return render_template('index.html', connected=True, page = 'index')
     else:
         return render_template('logRubbishReport.html', connected=False)
 
 @application.route('/logReport')
 def logAReport():
-    return render_template('logRubbishReport.html')
+    return render_template('logRubbishReport.html', page = 'logAReport')
 
 @application.route('/viewReport')
 def viewReports():
-    return render_template('viewReport.html')
+    return render_template('viewReport.html', page = 'viewReports')
 
 @application.route('/history', methods = ['GET', 'POST'])
 def history():
@@ -158,7 +158,7 @@ def history():
     else:
         selected_month = datetime.now().month
         calls = get_calls_for(selected_month)
-    return render_template('history.html', selected_month=selected_month, calls=calls)
+    return render_template('history.html', selected_month=selected_month, calls=calls, page = 'history')
 
 @application.route('/call/<int:CallID>', methods=['GET', 'POST'])
 def call_details(CallID):
