@@ -1,5 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    
+<body>
+    <div class="container">
+        <h1>Phone Call Statistics for This Month</h1>
+        <div class="box">
+            <h2>Total Calls</h2>
+            <p class="statistic" id="totalCalls">Loading...</p>
+        </div>
+        <div class="box">
+            <h2>Missed Calls</h2>
+            <p class="statistic" id="missedCalls">Loading...</p>
+        </div>
+        <div class="box">
+            <h2>Answered Calls</h2>
+            <p class="statistic" id="answeredCalls">Loading...</p>
+        </div>
+    </div>
+</body>
+
 {% endblock %}

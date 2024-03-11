@@ -150,10 +150,10 @@ tr:hover {
 
 button {
     padding: 8px 12px;
-    background-color: #00685E; /* Lighter background color for buttons */
+    background-color: #00685E; 
     color: #fff;
     border: none;
-    border-radius: 30px; /* Slightly round the buttons */
+    border-radius: 5px; 
     cursor: pointer;
     transition: background-color 0.3s, border-radius 0.3s;;
 }
@@ -170,7 +170,7 @@ button:hover {
 }
 
 .call-details h1 {
-    color: #00685E;
+    color: #000;
     margin-bottom: 20px;
 }
 
@@ -196,7 +196,6 @@ button:hover {
     background-color: #004f47;
 }
 
-/* Media query for smaller screens */
 @media (max-width: 767px) {
     .call-details {
         padding: 15px;
@@ -215,8 +214,6 @@ button:hover {
     }
 }
 
-
-Copy code
 .form-inline {
     display: flex;
     align-items: center;
@@ -228,16 +225,6 @@ Copy code
     border-radius: 5px;
     margin-right: 10px;
 }
-
-.btn {
-    padding: 8px 15px;
-    background-color: #00685E;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
 
 hr {
     border-top: 1px solid #ccc;
@@ -262,4 +249,40 @@ hr {
 h1 {
     text-align: center;
     color:#000
+}
+.container {
+    margin-top: 40px; 
+    margin-left: 250px; 
+    display: flex;
+    justify-content: space-around; 
+    flex-wrap: wrap; 
+}
+
+h1 {
+    text-align: center;
+    width: 100%; 
+}
+
+.box {
+    width: 30%; 
+    padding: 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.box h2 {
+    margin-top: 0;
+}
+
+.statistic {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+@media (max-width: 767px) {
+    .container {
+        margin-left: 0; 
+    }
 }
