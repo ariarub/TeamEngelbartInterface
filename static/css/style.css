@@ -116,17 +116,21 @@ body{
 
    .table-container {
     margin-top: 20px;
+
 }
 
 .table-container {
     margin-top: 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #fff; /* Add background color to the table */
-    border-radius: 8px; /* Add border-radius for a smoother appearance */
+    background-color: #fff; 
+    border-radius: 8px; 
+    box-sizing: border-box;
 }
 
 th, td {
@@ -159,14 +163,14 @@ button {
 }
 
 button:hover {
-    background-color: #004f47; /* Darken the background color on hover */
+    background-color: #004f47; 
 }
 
 .call-details {
     background-color: #fff;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
 }
 
 .call-details h1 {
@@ -187,7 +191,7 @@ button:hover {
     background-color: #00685E;
     color: #fff;
     border: none;
-    border-radius: 20px; /* Rounder button */
+    border-radius: 20px; 
     cursor: pointer;
     transition: background-color 0.3s, border-radius 0.3s;
 }
@@ -228,7 +232,7 @@ button:hover {
 
 hr {
     border-top: 1px solid #ccc;
-    margin-top: 20px; 
+    margin-top: 40px; 
 }
 
 .transcript {
@@ -248,41 +252,41 @@ hr {
 
 h1 {
     text-align: center;
-    color:#000
-}
-.container {
-    margin-top: 40px; 
-    margin-left: 250px; 
-    display: flex;
-    justify-content: space-around; 
-    flex-wrap: wrap; 
+    color:#000;
+    margin-top: 40px;
 }
 
-h1 {
-    text-align: center;
-    width: 100%; 
+td form button#call {
+    background-color: #00685E !important;
+    color: white;
+}
+
+button[type="submit"] {
+    border-radius: 5px; 
+}
+
+.first-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Horizontal centering */
+    justify-content: center; /* Vertical centering */
+    /* height: 100vh;  Set the height of the container to 100% of the viewport height */
+    margin-left: 50px; /* Moves the container to the right */
+    margin-right: 20px; /* Add some space between the container and the right edge of the page */
+    margin-top: 70px;
+    width: 'calc(100%-250px)'
+}
+
+.box-container {
+    display: flex; /* Use flexbox layout */
+    justify-content: space-around; /* Distribute items evenly with space around */
 }
 
 .box {
-    width: 30%; 
-    padding: 20px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-sizing: border-box;
-}
-
-.box h2 {
-    margin-top: 0;
-}
-
-.statistic {
-    font-size: 18px;
-    font-weight: bold;
-}
-
-@media (max-width: 767px) {
-    .container {
-        margin-left: 0; 
-    }
+    border: 1px solid #ccc; /* Border style */
+    padding: 20px; /* Padding around content */
+    margin: 10px; /* Spacing between boxes */
+    border-radius: 5px; /* Rounded corners */
+    flex: 1; /* Flex-grow property to distribute available space equally among the flex items */
+    max-width: 300px; /* Set a maximum width for each box */
 }

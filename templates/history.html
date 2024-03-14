@@ -44,7 +44,7 @@
                         <td>{{ call.callerNumber}}</td>
                         <td>{{ call.callStartTimestamp }}</td>
                         <td>{{ call.callDurationInSeconds }}</td>
-                        <td><form action ="/call/{{ call.CallID }}" method = 'post'><button id = 'call' type = 'submit' class="btn btn-rounded">View Details </button></form></td>
+                        <td><form action ="/call/{{ call.CallID }}" method = 'post'><button id = 'call' type = 'submit' class="btn btn-rounded green-button">View Details </button></form></td>
                     </tr>
                     {% endfor %}
                 </tbody>
