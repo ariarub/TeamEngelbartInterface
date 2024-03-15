@@ -135,10 +135,31 @@ def get_transcript_data(CallID):
         print(f"No transcript found for call {CallID}")
         return None
 
+def count_calls_for():
+    month = datetime.now().month
+    try:
+        conn = pyodbc.connect(connection_string)
+        cursor = conn.cursor()
+        sql_query = f"""
+            SELECT COUNT(*) AS call_count
+            FROM callRecords 
+            WHERE MONTH(callStartTimestamp) = ?
+        """
+        cursor.execute(sql_query, (month,))
+        calls = cursor.fetchone()[0]
+        cursor.close()
+        conn.close()
+        print(calls)
+        return calls
+    except pyodbc.Error as e:
+        print("Error:", e)
+        return -1  
+
 @application.route('/')
 def index():
+    calls_this_month = count_calls_for()
     if test_db_connection():
-        return render_template('index.html', connected=True, page = 'index')
+        return render_template('index.html', calls_this_month = calls_this_month, connected=True, page = 'index')
     else:
         return render_template('logRubbishReport.html', connected=False)
 

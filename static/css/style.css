@@ -289,4 +289,5 @@ button[type="submit"] {
     border-radius: 5px; /* Rounded corners */
     flex: 1; /* Flex-grow property to distribute available space equally among the flex items */
     max-width: 300px; /* Set a maximum width for each box */
+
 }

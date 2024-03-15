@@ -2,12 +2,12 @@
 
 {% block content %}
 <body>
-    <div class="first-page-container">
+    <div class="first-page-container" display="flex" justifyContent="space-evenly">
         <h1>Phone Call Statistics for This Month</h1>
         <div class="box-container">
             <div class="box">
                 <h2>Total Calls</h2>
-                <p class="statistic" id="totalCalls">Loading...</p>
+                <p class="statistic" id="totalCalls">{{ calls_this_month }}</p>
             </div>
             <div class="box">
                 <h2>Reports Generated</h2>
