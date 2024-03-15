@@ -77,6 +77,10 @@ body{
 
     .profile {
         color: #eee;
+        position: absolute;
+        top: 15px;
+        right: 0;
+        margin-right: 10px; /* Adjust margin for spacing */
     }
     
     .search-bar {
@@ -289,5 +293,11 @@ button[type="submit"] {
     border-radius: 5px; /* Rounded corners */
     flex: 1; /* Flex-grow property to distribute available space equally among the flex items */
     max-width: 300px; /* Set a maximum width for each box */
+    background-color: #f5f5f5;
+}
 
+.green-text {
+    color: #00685E;
+    font-size: 20px; /* Adjust the font size as needed */
+    font-weight: bold; /* Make the text bold */
 }

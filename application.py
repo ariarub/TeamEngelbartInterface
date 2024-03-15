@@ -173,10 +173,15 @@ def index():
 def logAReport():
     return render_template('logRubbishReport.html', page = 'logAReport')
 
-@application.route('/viewReport')
+@application.route('/viewReport', methods = ['GET', 'POST'])
 def viewReports():
-    month = datetime.now().month
-    current_month_name = calendar.month_name[month]
+    if request.method == 'POST':
+        selected_month = int(request.form['month'])
+        #calls = get_calls_for(selected_month)
+    else:
+        selected_month = datetime.now().month
+        #calls = get_calls_for(selected_month)
+    current_month_name = calendar.month_name[selected_month]
     return render_template('viewReport.html',current_month_name = current_month_name, page = 'viewReports')
 
 @application.route('/history', methods = ['GET', 'POST'])
@@ -187,7 +192,8 @@ def history():
     else:
         selected_month = datetime.now().month
         calls = get_calls_for(selected_month)
-    return render_template('history.html', selected_month=selected_month, calls=calls, page = 'history')
+    chosen_month = calendar.month_name[selected_month]
+    return render_template('history.html', chosen_month = chosen_month, selected_month=selected_month, calls=calls, page = 'history')
 
 @application.route('/call/<int:CallID>', methods=['GET', 'POST'])
 def call_details(CallID):
