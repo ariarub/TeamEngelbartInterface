@@ -32,19 +32,19 @@
             <table border="1">
                 <thead>
                     <tr>
-                        <th>Caller</th>
-                        <th>Call Date</th>
-                        <th>Call Duration (in seconds)</th>
-                        <th>View Call Details</th>
+                        <th style="text-align: center;">Caller</th>
+                        <th style="text-align: center;">Call Date</th>
+                        <th style="text-align: center;">Call Duration (in seconds)</th>
+                        <th style="text-align: center;">View Call Details</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for call in calls %}
                     <tr>
-                        <td>{{ call.callerNumber}}</td>
-                        <td>{{ call.callStartTimestamp }}</td>
-                        <td>{{ call.callDurationInSeconds }}</td>
-                        <td><form action ="/call/{{ call.CallID }}" method = 'post'><button id = 'call' type = 'submit' class="btn btn-rounded green-button">View Details </button></form></td>
+                        <td style="text-align: center;">{{ call.callerNumber}}</td>
+                        <td style="text-align: center;">{{ call.callStartTimestamp.strftime('%d-%m-%Y')  }}</td>
+                        <td style="text-align: center;">{{ call.callDurationInSeconds }}</td>
+                        <td style="text-align: center;"><form action ="/call/{{ call.CallID }}" method = 'post'><button id = 'call' type = 'submit' class="btn btn-rounded green-button">View Details </button></form></td>
                     </tr>
                     {% endfor %}
                 </tbody>

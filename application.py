@@ -5,6 +5,7 @@ import pyodbc
 import os
 import json
 import boto3
+import calendar
 
 application = Flask(__name__)
 
@@ -157,9 +158,14 @@ def count_calls_for():
 
 @application.route('/')
 def index():
+     # Dummy data for demonstration
+    data = {
+        "labels": ["Request a bin bag", "Report a pothole", "Report graffiti"],
+        "data": [30, 40, 30]  # Percentages of each type
+    }
     calls_this_month = count_calls_for()
     if test_db_connection():
-        return render_template('index.html', calls_this_month = calls_this_month, connected=True, page = 'index')
+        return render_template('index.html', calls_this_month = calls_this_month, data = data, connected=True, page = 'index')
     else:
         return render_template('logRubbishReport.html', connected=False)
 
@@ -169,7 +175,9 @@ def logAReport():
 
 @application.route('/viewReport')
 def viewReports():
-    return render_template('viewReport.html', page = 'viewReports')
+    month = datetime.now().month
+    current_month_name = calendar.month_name[month]
+    return render_template('viewReport.html',current_month_name = current_month_name, page = 'viewReports')
 
 @application.route('/history', methods = ['GET', 'POST'])
 def history():
