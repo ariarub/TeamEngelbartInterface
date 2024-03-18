@@ -7,6 +7,8 @@ body{
    .outside-main-container {
     display: flex;
     flex-direction: row;
+    height: 100%;
+    min-height: 100vh;
    }
    .inside-main-container {
     display: flex;
@@ -55,17 +57,17 @@ body{
     padding: 20px;
    }
     #navbar {
-        position: fixed;
-        top: 0;
-        left: 250px; /* Set to the width of the sidebar */
-        width: calc(100% - 250px); /* Adjust based on the sidebar width */
         background-color: #00685E; /* Adjust background color as needed */
-        height: 56px; /* Adjust height as needed */
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: center;
-        padding: 0 20px;
+        padding: 15px 20px;
         z-index: 999; /* Set to a value lower than the sidebar z-index */
+    }
+
+    .profile {
+        color: #eee;
+        margin-right: 10px; /* Adjust margin for spacing */
     }
 
     #sidebar{
@@ -80,14 +82,6 @@ body{
         height: 40px;
         border-radius: 50%;
         margin-right: 10px;
-    }
-
-    .profile {
-        color: #eee;
-        position: absolute;
-        top: 15px;
-        right: 0;
-        margin-right: 10px; /* Adjust margin for spacing */
     }
     
     .search-bar {
