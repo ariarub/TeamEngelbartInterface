@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from config import DB_CONFIG
 import pyodbc
 import os
 import json
@@ -11,14 +12,7 @@ application = Flask(__name__)
 
 s3 = boto3.client('s3')
 
-#put this info into an .env file and read it in for security 
-server = 'lexdb-dev.cwxwqmt5bnip.eu-west-2.rds.amazonaws.com'
-database = 'LexIssueData'
-username = 'hilladmin'
-password = 'Fg8peHWvpTZeTxuXHagi'
-driver = '{ODBC Driver 17 for SQL Server}'
-
-connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
+connection_string = f"DRIVER={DB_CONFIG['driver']};SERVER={DB_CONFIG['server']};DATABASE={DB_CONFIG['database']};UID={DB_CONFIG['username']};PWD={DB_CONFIG['password']}"
 
 application.config['STATIC_FOLDER'] = 'static'
 
