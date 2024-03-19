@@ -1,5 +1,11 @@
-from flask import Flask, render_template, request
+from contextlib import nullcontext
+from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import InputRequired, Length, ValidationError
+from flask_bcrypt import Bcrypt
 from datetime import datetime
 from config import DB_CONFIG
 import pyodbc
@@ -10,11 +16,92 @@ import calendar
 
 application = Flask(__name__)
 
+application.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
+db = SQLAlchemy(application) 
+bcrypt = Bcrypt(application)
+application.config['SECRET_KEY'] = 'secretkey'
+application.config['STATIC_FOLDER'] = 'static'
+
+login_manager = LoginManager()
+login_manager.init_app(application)
+#login_manager.login_view = "login"
+
+
 s3 = boto3.client('s3')
 
 connection_string = f"DRIVER={DB_CONFIG['driver']};SERVER={DB_CONFIG['server']};DATABASE={DB_CONFIG['database']};UID={DB_CONFIG['username']};PWD={DB_CONFIG['password']}"
 
 application.config['STATIC_FOLDER'] = 'static'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(20), nullable=False)
+    last_name = db.Column(db.String(20), nullable=False)
+    username = db.Column(db.String(20), nullable=False, unique=True) 
+    password = db.Column(db.String(80), nullable=False)
+
+    def __init__(self, first_name, last_name, username, password):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.username = username
+        self.password = password
+
+class RegisterForm(FlaskForm):
+    first_name = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder":"First name"})
+    last_name = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Last name"})
+    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Username"})
+    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Password"})
+    submit = SubmitField("Register")
+
+    def validate_username(self, username):
+        existing_user_name = User.query.filter_by(username=username.data).first()
+
+        if existing_user_name:
+            raise ValidationError("Username already exists.")
+        
+class LoginForm(FlaskForm):
+    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Username"})
+    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Password"})
+    submit = SubmitField("Login")
+
+def create_db():
+    with application.app_context():
+        db.create_all()
+        print('Created database!')
+
+@application.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                return redirect(url_for('index'))
+    return render_template('login.html', form=form)
+
+@application.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@application.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data)
+        new_user = User(first_name=form.first_name.data, last_name=form.last_name.data, username=form.username.data, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('login'))
+
+    return render_template('register.html', form=form)  
 
 def test_db_connection():
     try:
@@ -71,9 +158,10 @@ def get_call_details(callid):
         """
         cursor.execute(sql_query, (callid))
         calls = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        return calls
+        if calls is not None:
+            cursor.close()
+            conn.close()
+            return calls
     except pyodbc.Error as e:
         print("Error:", e)
         return [] 
@@ -141,7 +229,7 @@ def count_calls_for():
             WHERE MONTH(callStartTimestamp) = ?
         """
         cursor.execute(sql_query, (month,))
-        calls = cursor.fetchone()[0]
+        calls = cursor.fetchone()
         cursor.close()
         conn.close()
         print(calls)
@@ -150,7 +238,8 @@ def count_calls_for():
         print("Error:", e)
         return -1  
 
-@application.route('/')
+@application.route('/index')
+@login_required
 def index():
      # Dummy data for demonstration
     data = {
@@ -203,9 +292,7 @@ def call_details(CallID):
     
     return render_template('callDetails.html', call=call, formatted_transcript=formatted_transcript)
 
-
-
-
 if __name__ == '__main__':
-    # Run the Flask app
-    application.run(debug=True)
+    with application.app_context():
+        db.create_all()
+        application.run(debug=True)
