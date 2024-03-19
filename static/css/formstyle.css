@@ -1,0 +1,70 @@
+body{
+    background: #00685E;
+    overflow: hidden;
+}
+
+.header{
+    text-align: center;
+    font-size: 30px;
+    color: white;
+}
+   
+.content{
+    display: flex;
+    justify-items: center;
+    justify-content: center;
+}
+
+.formwrapper{
+    background: #00685E;
+    /*padding: 100px;
+    margin-top: 2;*/
+    max-width: 440px;
+    padding: 0 20px;
+    margin: 170px auto;
+}
+
+.loginform form{
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.fielditem{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.fielditem label{
+    margin-bottom: 0.5rem;
+    color: white;
+    font-size: 1.5rem;
+}
+
+input{
+    padding: 10px;
+}
+
+input[type=submit]{
+    background-color: white;
+    color:black;
+    font-size: 1.25rem;
+    padding: 10px;
+    transition: 0.3s 0s ease-out;
+    border: none;
+}
+
+input[type=submit]:focus{
+    background-color: white;
+    color:black;
+    font-size: 1.25rem;
+    padding: 10px;
+    transition: 0.3s 0s ease-out;
+    border: none;
+}
+
+.content{
+    display: flex;
+    justify-items: center;
+    justify-content: center;
+}
