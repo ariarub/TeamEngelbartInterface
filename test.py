@@ -36,7 +36,7 @@ class TestFlask(unittest.TestCase):
     def test_count_calls_for(self):
         self.assertIsInstance(count_calls_for(), int)
 
-    #test forms 
+    #test forms and buttons 
     def test_valid_form_submission_history(self):
         valid_form_data = {
             'month': '1' 
@@ -50,6 +50,11 @@ class TestFlask(unittest.TestCase):
         }
         response = self.app.post('/viewReport', data=valid_form_data, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
+
+    def test_view_details_button(self):
+        response = self.app.post("/call/1", data={"some_key": "some_value"})
+        self.assertEqual(response.status_code, 200)
+
     
     #test 
     
