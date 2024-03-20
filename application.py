@@ -287,7 +287,8 @@ def minutes_saved():
     total_duration = cursor.fetchone()[0]
     cursor.close()
     conn.close()
-    return total_duration
+
+    return round(total_duration/60,1)
 
 def report_records(selected_month):
     conn = pyodbc.connect(connection_string)
@@ -384,7 +385,7 @@ def history():
     chosen_month = calendar.month_name[selected_month]
     return render_template('history.html', chosen_month = chosen_month, selected_month=selected_month, calls=calls, page = 'history')
 
-@application.route('/call/<int:CallID>', methods=['GET', 'POST'])
+@application.route('/call/<string:CallID>', methods=['GET', 'POST'])
 def call_details(CallID):
     call = get_call_details(CallID)
     transcript = get_transcript_data(CallID)
