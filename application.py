@@ -352,6 +352,7 @@ def count_issues_for_type(issue_type):
 @application.route('/')
 @login_required
 def index():
+    current_user_name = f"{current_user.first_name} {current_user.last_name}" if current_user.is_authenticated else None
     issues = count_issues_for()
     duration = minutes_saved()
     issueTypes = count_issue_types()
@@ -362,7 +363,7 @@ def index():
     }
     calls_this_month = count_calls_for()
     if test_db_connection():
-        return render_template('index.html', duration = duration, issues = issues, calls_this_month = calls_this_month, data = data, connected=True, page = 'index')
+        return render_template('index.html', current_user_name = current_user_name, duration = duration, issues = issues, calls_this_month = calls_this_month, data = data, connected=True, page = 'index')
     else:
         return render_template('logRubbishReport.html', connected=False)
 

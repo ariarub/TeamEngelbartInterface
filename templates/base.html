@@ -35,11 +35,11 @@
         <div class="inside-main-container">
             <div id="navbar">
                 <div class="profile">
-                    <span class="name">John Doe</span>
+                    <span class="name">{{ current_user_name }}</span>
                 </div>
             </div> 
 
-            <div class="container" display="flex" justifyContent="space-evenly" width="100% - 250px">
+            <div class="container" display="flex" justifyContent="space-evenly">
                 {% block content %} {% endblock %}
             </div> 
         </div>
