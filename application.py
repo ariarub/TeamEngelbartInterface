@@ -286,16 +286,9 @@ def minutes_saved():
     conn.close()
     return total_duration
 
-def report_records():
-# Get the selected month from the request parameters
-    selected_month = datetime.now().month
-
-    
-    # Establish a connection to the database
+def report_records(selected_month):
     conn = pyodbc.connect(connection_string)
     cursor = conn.cursor()
-
-    # Query the database to get the details of calls made in the selected month along with their associated issue types
     sql_query = """
         SELECT Calls.CallerNumber, Calls.CallStartTimeStamp, Calls.DurationSeconds, Issues.TypeName
         FROM Calls
@@ -305,20 +298,55 @@ def report_records():
     """
     cursor.execute(sql_query, (selected_month,))
     calls = cursor.fetchall()
-
-    # Close the cursor and connection
     cursor.close()
     conn.close()
     return calls 
+
+def count_issue_types():
+    try:
+        conn = pyodbc.connect(connection_string)
+        cursor = conn.cursor()
+        sql_query = """
+            SELECT TypeName 
+            FROM IssueTypes
+        """
+        cursor.execute(sql_query)
+        issue_types = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return [issue_type[0] for issue_type in issue_types]
+    except pyodbc.Error as e:
+        print("Error:", e)
+        return []
+
+def count_issues_for_type(issue_type):
+    try:
+        conn = pyodbc.connect(connection_string)
+        cursor = conn.cursor()
+        sql_query = """
+            SELECT COUNT(*) 
+            FROM Issues
+            WHERE TypeName = ?
+        """
+        cursor.execute(sql_query, (issue_type,))
+        count = cursor.fetchone()[0]
+        cursor.close()
+        conn.close()
+        return count
+    except pyodbc.Error as e:
+        print("Error:", e)
+        return 0
 
 @application.route('/')
 @login_required
 def index():
     issues = count_issues_for()
     duration = minutes_saved()
+    issueTypes = count_issue_types()
+    issueCounts = [count_issues_for_type(issue_type) for issue_type in issueTypes]
     data = {
-        "labels": ["Request a bin bag", "Report a pothole", "Report graffiti"],
-        "data": [30, 40, 30] 
+        "labels": issueTypes,
+        "data": issueCounts 
     }
     calls_this_month = count_calls_for()
     if test_db_connection():
@@ -332,13 +360,13 @@ def logAReport():
 
 @application.route('/viewReport', methods = ['GET', 'POST'])
 def viewReports():
-    reports = report_records()
     if request.method == 'POST':
         selected_month = int(request.form['month'])
-        #calls = get_calls_for(selected_month)
+        reports = report_records(selected_month)
+
     else:
         selected_month = datetime.now().month
-        #calls = get_calls_for(selected_month)
+        reports = report_records(selected_month)
     current_month_name = calendar.month_name[selected_month]
     return render_template('viewReport.html',reports = reports, current_month_name = current_month_name, page = 'viewReports')
 
