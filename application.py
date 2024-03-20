@@ -238,16 +238,91 @@ def count_calls_for():
         print("Error:", e)
         return -1  
 
+def count_issues_for():
+    # Get the current month
+    current_month = datetime.now().month
+
+    # Establish a connection to the database
+    conn = pyodbc.connect(connection_string)
+    cursor = conn.cursor()
+
+    # Query the database to count the number of issues generated this month
+    sql_query = """
+        SELECT COUNT(*) AS issue_count
+        FROM Issues
+        JOIN ConnectCallIssue ON Issues.IssueID = ConnectCallIssue.IssueID
+        JOIN Calls ON ConnectCallIssue.CallID = Calls.CallID
+        WHERE MONTH(Calls.CallStartTimeStamp) = ?
+    """
+    cursor.execute(sql_query, (current_month,))
+    issue_count = cursor.fetchone()[0]
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+    return issue_count
+
+def minutes_saved():
+    current_month = datetime.now().month
+    conn = pyodbc.connect(connection_string)
+    cursor = conn.cursor()
+    sql_issue_count = """
+        SELECT COUNT(*) AS issue_count
+        FROM Issues
+        JOIN ConnectCallIssue ON Issues.IssueID = ConnectCallIssue.IssueID
+        JOIN Calls ON ConnectCallIssue.CallID = Calls.CallID
+        WHERE MONTH(Calls.CallStartTimeStamp) = ?
+    """
+    cursor.execute(sql_issue_count, (current_month,))
+    issue_count = cursor.fetchone()[0]
+    sql_total_duration = """
+        SELECT SUM(DurationSeconds) AS total_duration
+        FROM Calls
+        WHERE MONTH(CallStartTimeStamp) = ?
+    """
+    cursor.execute(sql_total_duration, (current_month,))
+    total_duration = cursor.fetchone()[0]
+    cursor.close()
+    conn.close()
+    return total_duration
+
+def report_records():
+# Get the selected month from the request parameters
+    selected_month = datetime.now().month
+
+    
+    # Establish a connection to the database
+    conn = pyodbc.connect(connection_string)
+    cursor = conn.cursor()
+
+    # Query the database to get the details of calls made in the selected month along with their associated issue types
+    sql_query = """
+        SELECT Calls.CallerNumber, Calls.CallStartTimeStamp, Calls.DurationSeconds, Issues.TypeName
+        FROM Calls
+        LEFT JOIN ConnectCallIssue ON Calls.CallID = ConnectCallIssue.CallID
+        LEFT JOIN Issues ON ConnectCallIssue.IssueID = Issues.IssueID
+        WHERE MONTH(Calls.CallStartTimeStamp) = ?
+    """
+    cursor.execute(sql_query, (selected_month,))
+    calls = cursor.fetchall()
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+    return calls 
+
 @application.route('/')
 @login_required
 def index():
+    issues = count_issues_for()
+    duration = minutes_saved()
     data = {
         "labels": ["Request a bin bag", "Report a pothole", "Report graffiti"],
         "data": [30, 40, 30] 
     }
     calls_this_month = count_calls_for()
     if test_db_connection():
-        return render_template('index.html', calls_this_month = calls_this_month, data = data, connected=True, page = 'index')
+        return render_template('index.html', duration = duration, issues = issues, calls_this_month = calls_this_month, data = data, connected=True, page = 'index')
     else:
         return render_template('logRubbishReport.html', connected=False)
 
@@ -257,6 +332,7 @@ def logAReport():
 
 @application.route('/viewReport', methods = ['GET', 'POST'])
 def viewReports():
+    reports = report_records()
     if request.method == 'POST':
         selected_month = int(request.form['month'])
         #calls = get_calls_for(selected_month)
@@ -264,7 +340,7 @@ def viewReports():
         selected_month = datetime.now().month
         #calls = get_calls_for(selected_month)
     current_month_name = calendar.month_name[selected_month]
-    return render_template('viewReport.html',current_month_name = current_month_name, page = 'viewReports')
+    return render_template('viewReport.html',reports = reports, current_month_name = current_month_name, page = 'viewReports')
 
 @application.route('/history', methods = ['GET', 'POST'])
 def history():
