@@ -230,10 +230,13 @@ def count_calls_for():
         """
         cursor.execute(sql_query, (month,))
         calls = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        print(calls)
-        return calls
+        if calls is not None:
+            cursor.close()
+            conn.close()
+            print(calls[0])
+            return calls[0]
+        else:
+            return -1
     except pyodbc.Error as e:
         print("Error:", e)
         return -1  
