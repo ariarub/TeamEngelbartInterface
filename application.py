@@ -258,37 +258,42 @@ def count_issues_for():
         WHERE MONTH(Calls.CallStartTimeStamp) = ?
     """
     cursor.execute(sql_query, (current_month,))
-    issue_count = cursor.fetchone()[0]
-
-    # Close the cursor and connection
-    cursor.close()
-    conn.close()
-    return issue_count
+    issue_count = cursor.fetchone()
+    if issue_count is not None:
+        # Close the cursor and connection
+        cursor.close()
+        conn.close()
+        return issue_count[0]
+    else:
+        return -1
 
 def minutes_saved():
     current_month = datetime.now().month
     conn = pyodbc.connect(connection_string)
     cursor = conn.cursor()
-    sql_issue_count = """
-        SELECT COUNT(*) AS issue_count
-        FROM Issues
-        JOIN ConnectCallIssue ON Issues.IssueID = ConnectCallIssue.IssueID
-        JOIN Calls ON ConnectCallIssue.CallID = Calls.CallID
-        WHERE MONTH(Calls.CallStartTimeStamp) = ?
-    """
-    cursor.execute(sql_issue_count, (current_month,))
-    issue_count = cursor.fetchone()[0]
+    # sql_issue_count = """
+    #     SELECT COUNT(*) AS issue_count
+    #     FROM Issues
+    #     JOIN ConnectCallIssue ON Issues.IssueID = ConnectCallIssue.IssueID
+    #     JOIN Calls ON ConnectCallIssue.CallID = Calls.CallID
+    #     WHERE MONTH(Calls.CallStartTimeStamp) = ?
+    # """
+    # cursor.execute(sql_issue_count, (current_month,))
+    # issue_count = cursor.fetchone()[0]
     sql_total_duration = """
         SELECT SUM(DurationSeconds) AS total_duration
         FROM Calls
         WHERE MONTH(CallStartTimeStamp) = ?
     """
     cursor.execute(sql_total_duration, (current_month,))
-    total_duration = cursor.fetchone()[0]
-    cursor.close()
-    conn.close()
-
-    return round(total_duration/60,1)
+    total_duration = cursor.fetchone()
+    if total_duration is not None:
+        # Close the cursor and connection
+        cursor.close()
+        conn.close()
+        return round(total_duration[0]/60,1)
+    else:
+        return -1
 
 def report_records(selected_month):
     conn = pyodbc.connect(connection_string)
@@ -333,10 +338,13 @@ def count_issues_for_type(issue_type):
             WHERE TypeName = ?
         """
         cursor.execute(sql_query, (issue_type,))
-        count = cursor.fetchone()[0]
-        cursor.close()
-        conn.close()
-        return count
+        count = cursor.fetchone()
+        if count is not None:
+            cursor.close()
+            conn.close()
+            return count[0]
+        else:
+            return -1
     except pyodbc.Error as e:
         print("Error:", e)
         return 0
