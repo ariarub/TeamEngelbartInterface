@@ -117,7 +117,7 @@ def get_call_records():
     try:
         conn = pyodbc.connect(connection_string)
         cursor = conn.cursor()
-        sql_query = 'SELECT * FROM callRecords'
+        sql_query = 'SELECT * FROM Calls'
         cursor.execute(sql_query)
         rows = cursor.fetchall()
         for row in rows:
@@ -135,8 +135,8 @@ def get_calls_for(month):
         cursor = conn.cursor()
         sql_query = f"""
             SELECT * 
-            FROM callRecords 
-            WHERE MONTH(callStartTimestamp) = ?
+            FROM Calls 
+            WHERE MONTH(CallStartTimestamp) = ?
         """
         cursor.execute(sql_query, (month,))
         calls = cursor.fetchall()
@@ -153,7 +153,7 @@ def get_call_details(callid):
         cursor = conn.cursor()
         sql_query = f"""
             SELECT * 
-            FROM callRecords 
+            FROM Calls 
             WHERE CallID = ?
         """
         cursor.execute(sql_query, (callid))
@@ -190,8 +190,8 @@ def get_transcript_data(CallID):
         conn = pyodbc.connect(connection_string)
         cursor = conn.cursor()
         sql_query = """
-            SELECT logFileName 
-            FROM callRecords 
+            SELECT LogFileName 
+            FROM Calls 
             WHERE CallID = ?
         """
         cursor.execute(sql_query, (CallID,))
@@ -225,30 +225,135 @@ def count_calls_for():
         cursor = conn.cursor()
         sql_query = f"""
             SELECT COUNT(*) AS call_count
-            FROM callRecords 
-            WHERE MONTH(callStartTimestamp) = ?
+            FROM Calls 
+            WHERE MONTH(CallStartTimestamp) = ?
         """
         cursor.execute(sql_query, (month,))
         calls = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        print(calls)
-        return calls
+        if calls is not None:
+            cursor.close()
+            conn.close()
+            print(calls[0])
+            return calls[0]
+        else:
+            return -1
     except pyodbc.Error as e:
         print("Error:", e)
         return -1  
 
-@application.route('/index')
+def count_issues_for():
+    # Get the current month
+    current_month = datetime.now().month
+
+    # Establish a connection to the database
+    conn = pyodbc.connect(connection_string)
+    cursor = conn.cursor()
+
+    # Query the database to count the number of issues generated this month
+    sql_query = """
+        SELECT COUNT(*) AS issue_count
+        FROM Issues
+        JOIN ConnectCallIssue ON Issues.IssueID = ConnectCallIssue.IssueID
+        JOIN Calls ON ConnectCallIssue.CallID = Calls.CallID
+        WHERE MONTH(Calls.CallStartTimeStamp) = ?
+    """
+    cursor.execute(sql_query, (current_month,))
+    issue_count = cursor.fetchone()[0]
+
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
+    return issue_count
+
+def minutes_saved():
+    current_month = datetime.now().month
+    conn = pyodbc.connect(connection_string)
+    cursor = conn.cursor()
+    sql_issue_count = """
+        SELECT COUNT(*) AS issue_count
+        FROM Issues
+        JOIN ConnectCallIssue ON Issues.IssueID = ConnectCallIssue.IssueID
+        JOIN Calls ON ConnectCallIssue.CallID = Calls.CallID
+        WHERE MONTH(Calls.CallStartTimeStamp) = ?
+    """
+    cursor.execute(sql_issue_count, (current_month,))
+    issue_count = cursor.fetchone()[0]
+    sql_total_duration = """
+        SELECT SUM(DurationSeconds) AS total_duration
+        FROM Calls
+        WHERE MONTH(CallStartTimeStamp) = ?
+    """
+    cursor.execute(sql_total_duration, (current_month,))
+    total_duration = cursor.fetchone()[0]
+    cursor.close()
+    conn.close()
+    return total_duration
+
+def report_records(selected_month):
+    conn = pyodbc.connect(connection_string)
+    cursor = conn.cursor()
+    sql_query = """
+        SELECT Calls.CallerNumber, Calls.CallStartTimeStamp, Calls.DurationSeconds, Issues.TypeName
+        FROM Calls
+        LEFT JOIN ConnectCallIssue ON Calls.CallID = ConnectCallIssue.CallID
+        LEFT JOIN Issues ON ConnectCallIssue.IssueID = Issues.IssueID
+        WHERE MONTH(Calls.CallStartTimeStamp) = ?
+    """
+    cursor.execute(sql_query, (selected_month,))
+    calls = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return calls 
+
+def count_issue_types():
+    try:
+        conn = pyodbc.connect(connection_string)
+        cursor = conn.cursor()
+        sql_query = """
+            SELECT TypeName 
+            FROM IssueTypes
+        """
+        cursor.execute(sql_query)
+        issue_types = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return [issue_type[0] for issue_type in issue_types]
+    except pyodbc.Error as e:
+        print("Error:", e)
+        return []
+
+def count_issues_for_type(issue_type):
+    try:
+        conn = pyodbc.connect(connection_string)
+        cursor = conn.cursor()
+        sql_query = """
+            SELECT COUNT(*) 
+            FROM Issues
+            WHERE TypeName = ?
+        """
+        cursor.execute(sql_query, (issue_type,))
+        count = cursor.fetchone()[0]
+        cursor.close()
+        conn.close()
+        return count
+    except pyodbc.Error as e:
+        print("Error:", e)
+        return 0
+
+@application.route('/')
 @login_required
 def index():
-     # Dummy data for demonstration
+    issues = count_issues_for()
+    duration = minutes_saved()
+    issueTypes = count_issue_types()
+    issueCounts = [count_issues_for_type(issue_type) for issue_type in issueTypes]
     data = {
-        "labels": ["Request a bin bag", "Report a pothole", "Report graffiti"],
-        "data": [30, 40, 30]  # Percentages of each type
+        "labels": issueTypes,
+        "data": issueCounts 
     }
     calls_this_month = count_calls_for()
     if test_db_connection():
-        return render_template('index.html', calls_this_month = calls_this_month, data = data, connected=True, page = 'index')
+        return render_template('index.html', duration = duration, issues = issues, calls_this_month = calls_this_month, data = data, connected=True, page = 'index')
     else:
         return render_template('logRubbishReport.html', connected=False)
 
@@ -260,12 +365,13 @@ def logAReport():
 def viewReports():
     if request.method == 'POST':
         selected_month = int(request.form['month'])
-        #calls = get_calls_for(selected_month)
+        reports = report_records(selected_month)
+
     else:
         selected_month = datetime.now().month
-        #calls = get_calls_for(selected_month)
+        reports = report_records(selected_month)
     current_month_name = calendar.month_name[selected_month]
-    return render_template('viewReport.html',current_month_name = current_month_name, page = 'viewReports')
+    return render_template('viewReport.html',reports = reports, current_month_name = current_month_name, page = 'viewReports')
 
 @application.route('/history', methods = ['GET', 'POST'])
 def history():

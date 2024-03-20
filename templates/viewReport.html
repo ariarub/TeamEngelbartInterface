@@ -39,12 +39,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for call in calls %}
+                        {% for call in reports %}
                         <tr>
-                            <td style="text-align: center;">{{ call.callerNumbe }}</td>
-                            <td style="text-align: center;">{{ call.callStartTimestamp.strftime('%d-%m-%Y')  }}</td>
-                            <td style="text-align: center;">{{ call.callDurationInSeconds }}</td>
-                            <td style="text-align: center;"></td>
+                            <td style="text-align: center;">{{ call.CallerNumber }}</td>
+                            <td style="text-align: center;">{{ call.CallStartTimeStamp.strftime('%d-%m-%Y')  }}</td>
+                            <td style="text-align: center;">{{ call.DurationSeconds }}</td>
+                            <td style="text-align: center;">{{ call.TypeName}}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
