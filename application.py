@@ -117,7 +117,7 @@ def get_call_records():
     try:
         conn = pyodbc.connect(connection_string)
         cursor = conn.cursor()
-        sql_query = 'SELECT * FROM callRecords'
+        sql_query = 'SELECT * FROM Calls'
         cursor.execute(sql_query)
         rows = cursor.fetchall()
         for row in rows:
@@ -135,8 +135,8 @@ def get_calls_for(month):
         cursor = conn.cursor()
         sql_query = f"""
             SELECT * 
-            FROM callRecords 
-            WHERE MONTH(callStartTimestamp) = ?
+            FROM Calls 
+            WHERE MONTH(CallStartTimestamp) = ?
         """
         cursor.execute(sql_query, (month,))
         calls = cursor.fetchall()
@@ -153,7 +153,7 @@ def get_call_details(callid):
         cursor = conn.cursor()
         sql_query = f"""
             SELECT * 
-            FROM callRecords 
+            FROM Calls 
             WHERE CallID = ?
         """
         cursor.execute(sql_query, (callid))
@@ -190,8 +190,8 @@ def get_transcript_data(CallID):
         conn = pyodbc.connect(connection_string)
         cursor = conn.cursor()
         sql_query = """
-            SELECT logFileName 
-            FROM callRecords 
+            SELECT LogFileName 
+            FROM Calls 
             WHERE CallID = ?
         """
         cursor.execute(sql_query, (CallID,))
@@ -225,8 +225,8 @@ def count_calls_for():
         cursor = conn.cursor()
         sql_query = f"""
             SELECT COUNT(*) AS call_count
-            FROM callRecords 
-            WHERE MONTH(callStartTimestamp) = ?
+            FROM Calls 
+            WHERE MONTH(CallStartTimestamp) = ?
         """
         cursor.execute(sql_query, (month,))
         calls = cursor.fetchone()
@@ -238,13 +238,12 @@ def count_calls_for():
         print("Error:", e)
         return -1  
 
-@application.route('/index')
+@application.route('/')
 @login_required
 def index():
-     # Dummy data for demonstration
     data = {
         "labels": ["Request a bin bag", "Report a pothole", "Report graffiti"],
-        "data": [30, 40, 30]  # Percentages of each type
+        "data": [30, 40, 30] 
     }
     calls_this_month = count_calls_for()
     if test_db_connection():

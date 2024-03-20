@@ -41,9 +41,9 @@
                 <tbody>
                     {% for call in calls %}
                     <tr>
-                        <td style="text-align: center;">{{ call.callerNumber}}</td>
-                        <td style="text-align: center;">{{ call.callStartTimestamp.strftime('%d-%m-%Y')  }}</td>
-                        <td style="text-align: center;">{{ call.callDurationInSeconds }}</td>
+                        <td style="text-align: center;">{{ call.CallerNumber}}</td>
+                        <td style="text-align: center;">{{ call.CallStartTimeStamp.strftime('%d-%m-%Y')  }}</td>
+                        <td style="text-align: center;">{{ call.DurationSeconds }}</td>
                         <td style="text-align: center;"><form action ="/call/{{ call.CallID }}" method = 'post'><button id = 'call' type = 'submit' class="btn btn-rounded green-button">View Details </button></form></td>
                     </tr>
                     {% endfor %}
