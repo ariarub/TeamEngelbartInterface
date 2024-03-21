@@ -4,10 +4,10 @@ This project is deployed and can be accessed through:
 
 ## Installation 
 
-### 1.Clone the repository
+### Clone the repository
 
-### 2.Install dependencies:
+### Install dependencies:
 `pip install -r requirements.txt`
 
-### 3.Start the application:
+### Start the application:
 `python application.py`
