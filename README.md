@@ -11,3 +11,8 @@ This project is deployed and can be accessed through:
 
 ### Start the application:
 `python application.py`
+
+## Testing
+
+Unit tests have been implemented, to run these use the command:
+`python test.py`
