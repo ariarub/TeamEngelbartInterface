@@ -1,4 +1,3 @@
-from contextlib import nullcontext
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -9,7 +8,6 @@ from flask_bcrypt import Bcrypt
 from datetime import datetime
 from config import DB_CONFIG
 import pyodbc
-import os
 import json
 import boto3
 import calendar
@@ -410,5 +408,5 @@ def call_details(CallID):
 
 if __name__ == '__main__':
     with application.app_context():
-        db.create_all()
+        #db.create_all()
         application.run(debug=True)
