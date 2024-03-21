@@ -5,3 +5,4 @@
 !.elasticbeanstalk/*.global.yml
 config.py
 venv
+.env
