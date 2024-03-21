@@ -349,7 +349,7 @@ def count_issues_for_type(issue_type):
         print("Error:", e)
         return 0
 
-@application.route('/')
+@application.route('/index')
 @login_required
 def index():
     current_user_name = f"{current_user.first_name} {current_user.last_name}" if current_user.is_authenticated else None
