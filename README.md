@@ -6,6 +6,10 @@ This project is deployed and can be accessed through:
 
 ### Clone the repository
 
+### Create a virtual environment:
+`python -m venv venv`
+`source venv/bin/activate`
+
 ### Install dependencies:
 `pip install -r requirements.txt`
 
