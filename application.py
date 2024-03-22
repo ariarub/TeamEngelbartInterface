@@ -68,7 +68,7 @@ def create_db():
         userDatabase.create_all()
         print('Created user database!')
 
-@application.route('/login', methods=['GET', 'POST'])
+@application.route('/', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
