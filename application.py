@@ -16,7 +16,7 @@ import calendar
 application = Flask(__name__)
 
 application.config['SQLALCHEMY_DATABASE_URI'] = f"mssql+pyodbc://{DB_CONFIG['username']}:{DB_CONFIG['password']}@{DB_CONFIG['server']}/{DB_CONFIG['database']}?driver={DB_CONFIG['driver']}"
-db = SQLAlchemy(application) 
+userDatabase = SQLAlchemy(application) 
 bcrypt = Bcrypt(application)
 application.config['SECRET_KEY'] = 'secretkey'
 application.config['STATIC_FOLDER'] = 'static'
@@ -34,14 +34,14 @@ application.config['STATIC_FOLDER'] = 'static'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return Users.query.get(int(user_id))
 
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(20), nullable=False)
-    last_name = db.Column(db.String(20), nullable=False)
-    username = db.Column(db.String(20), nullable=False, unique=True) 
-    password = db.Column(db.String(80), nullable=False)
+class Users(userDatabase.Model, UserMixin):
+    id = userDatabase.Column(userDatabase.Integer, primary_key=True)
+    first_name = userDatabase.Column(userDatabase.String(20), nullable=False)
+    last_name = userDatabase.Column(userDatabase.String(20), nullable=False)
+    username = userDatabase.Column(userDatabase.String(20), nullable=False, unique=True) 
+    password = userDatabase.Column(userDatabase.String(80), nullable=False)
 
     def __init__(self, first_name, last_name, username, password):
         self.first_name = first_name
@@ -69,8 +69,8 @@ class LoginForm(FlaskForm):
 
 def create_db():
     with application.app_context():
-        db.create_all()
-        print('Created database!')
+        userDatabase.create_all()
+        print('Created user database!')
 
 @application.route('/login', methods=['GET', 'POST'])
 def login():
@@ -96,8 +96,8 @@ def register():
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
         new_user = User(first_name=form.first_name.data, last_name=form.last_name.data, username=form.username.data, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
+        userDatabase.session.add(new_user)
+        userDatabase.session.commit()
         return redirect(url_for('login'))
 
     return render_template('register.html', form=form)  
