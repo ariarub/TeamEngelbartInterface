@@ -324,3 +324,7 @@ button[type="submit"] {
     height: 100%; /* Ensure all cards in the deck have the same height */
 }
 
+.custom-card-deck .card-body {
+    margin-bottom: 2rem; /* Adjust this value to control the distance between text and button */
+}
+
