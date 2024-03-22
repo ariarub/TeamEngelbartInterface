@@ -7,7 +7,6 @@ from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 from config import DB_CONFIG
-from userConfig import DB_CONFIG
 import pyodbc
 import json
 import boto3
@@ -15,7 +14,7 @@ import calendar
 
 application = Flask(__name__)
 
-application.config['SQLALCHEMY_DATABASE_URI'] = f"mssql+pyodbc://{DB_CONFIG['username']}:{DB_CONFIG['password']}@{DB_CONFIG['server']}/{DB_CONFIG['database']}?driver={DB_CONFIG['driver']}"
+application.config['SQLALCHEMY_DATABASE_URI'] = f"mssql+pyodbc://{DB_CONFIG['username']}:{DB_CONFIG['password']}@{DB_CONFIG['server']}/{DB_CONFIG['userDatabase']}?driver={DB_CONFIG['sqlAlchemyDriver']}"
 userDatabase = SQLAlchemy(application) 
 bcrypt = Bcrypt(application)
 application.config['SECRET_KEY'] = 'secretkey'
@@ -25,12 +24,9 @@ login_manager = LoginManager()
 login_manager.init_app(application)
 #login_manager.login_view = "login"
 
-
 s3 = boto3.client('s3')
 
-connection_string = f"DRIVER={DB_CONFIG['driver']};SERVER={DB_CONFIG['server']};DATABASE={DB_CONFIG['database']};UID={DB_CONFIG['username']};PWD={DB_CONFIG['password']}"
-
-application.config['STATIC_FOLDER'] = 'static'
+connection_string = f"DRIVER={DB_CONFIG['pyodbcDriver']};SERVER={DB_CONFIG['server']};DATABASE={DB_CONFIG['callDatabase']};UID={DB_CONFIG['username']};PWD={DB_CONFIG['password']}"
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -41,7 +37,7 @@ class Users(userDatabase.Model, UserMixin):
     first_name = userDatabase.Column(userDatabase.String(20), nullable=False)
     last_name = userDatabase.Column(userDatabase.String(20), nullable=False)
     username = userDatabase.Column(userDatabase.String(20), nullable=False, unique=True) 
-    password = userDatabase.Column(userDatabase.String(80), nullable=False)
+    password = userDatabase.Column(userDatabase.String(60), nullable=False)
 
     def __init__(self, first_name, last_name, username, password):
         self.first_name = first_name
@@ -53,18 +49,18 @@ class RegisterForm(FlaskForm):
     first_name = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder":"First name"})
     last_name = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Last name"})
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Username"})
-    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Password"})
+    password = PasswordField(validators=[InputRequired(), Length(min=4)], render_kw={"placeholder":"Password"})
     submit = SubmitField("Register")
 
     def validate_username(self, username):
-        existing_user_name = User.query.filter_by(username=username.data).first()
+        existing_user_name = Users.query.filter_by(username=username.data).first()
 
         if existing_user_name:
             raise ValidationError("Username already exists.")
         
 class LoginForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Username"})
-    password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Password"})
+    password = PasswordField(validators=[InputRequired(), Length(min=4)], render_kw={"placeholder":"Password"})
     submit = SubmitField("Login")
 
 def create_db():
@@ -76,7 +72,7 @@ def create_db():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = Users.query.filter_by(username=form.username.data).first()
         if user:
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
@@ -95,7 +91,7 @@ def register():
 
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(first_name=form.first_name.data, last_name=form.last_name.data, username=form.username.data, password=hashed_password)
+        new_user = Users(first_name=form.first_name.data, last_name=form.last_name.data, username=form.username.data, password=hashed_password)
         userDatabase.session.add(new_user)
         userDatabase.session.commit()
         return redirect(url_for('login'))

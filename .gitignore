@@ -5,6 +5,8 @@
 
 config.py
 
+activate/
+
 # Created by https://www.toptal.com/developers/gitignore/api/python,flask,elasticbeanstalk,database
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,flask,elasticbeanstalk,database
 
