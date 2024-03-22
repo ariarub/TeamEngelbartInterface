@@ -1,6 +1,6 @@
 # Getting Started 
 
-This project is deployed and can be accessed through:
+This project is deployed and can be accessed through: http://admininterfaceenv.eba-hiwkymbv.eu-west-2.elasticbeanstalk.com/
 
 ## Installation 
 
