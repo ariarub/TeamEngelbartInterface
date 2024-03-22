@@ -7,6 +7,7 @@ from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 from config import DB_CONFIG
+from userConfig import DB_CONFIG
 import pyodbc
 import json
 import boto3
@@ -14,7 +15,7 @@ import calendar
 
 application = Flask(__name__)
 
-application.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
+application.config['SQLALCHEMY_DATABASE_URI'] = f"mssql+pyodbc://{DB_CONFIG['username']}:{DB_CONFIG['password']}@{DB_CONFIG['server']}/{DB_CONFIG['database']}?driver={DB_CONFIG['driver']}"
 db = SQLAlchemy(application) 
 bcrypt = Bcrypt(application)
 application.config['SECRET_KEY'] = 'secretkey'
