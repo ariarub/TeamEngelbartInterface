@@ -1,3 +1,4 @@
+from contextlib import nullcontext
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -6,8 +7,9 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
-from config import DB_CONFIG,ACCESSPOINT
+from config import DB_CONFIG
 import pyodbc
+import os
 import json
 import boto3
 import calendar
@@ -202,10 +204,11 @@ def get_transcript_data(CallID):
     
     if calls:
         transcript_filename = calls[0] 
+        bucket_name = 'engelbartchatlogs1'
         transcript_key = transcript_filename
         
         try:
-            response = s3.get_object(Bucket=ACCESSPOINT, Key=transcript_key)
+            response = s3.get_object(Bucket=bucket_name, Key=transcript_key)
             transcript_data = json.loads(response['Body'].read().decode('utf-8'))
             return transcript_data
         except Exception as e:
@@ -346,10 +349,9 @@ def count_issues_for_type(issue_type):
         print("Error:", e)
         return 0
 
-@application.route('/index')
+@application.route('/')
 @login_required
 def index():
-    current_user_name = f"{current_user.first_name} {current_user.last_name}" if current_user.is_authenticated else None
     issues = count_issues_for()
     duration = minutes_saved()
     issueTypes = count_issue_types()
@@ -360,7 +362,7 @@ def index():
     }
     calls_this_month = count_calls_for()
     if test_db_connection():
-        return render_template('index.html', current_user_name = current_user_name, duration = duration, issues = issues, calls_this_month = calls_this_month, data = data, connected=True, page = 'index')
+        return render_template('index.html', duration = duration, issues = issues, calls_this_month = calls_this_month, data = data, connected=True, page = 'index')
     else:
         return render_template('logRubbishReport.html', connected=False)
 
@@ -377,10 +379,8 @@ def viewReports():
     else:
         selected_month = datetime.now().month
         reports = report_records(selected_month)
-    months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     current_month_name = calendar.month_name[selected_month]
-    current_month_num = months.index(current_month_name)+1
-    return render_template('viewReport.html',reports = reports, current_month_name = current_month_name, selected_month = current_month_num, page = 'viewReports')
+    return render_template('viewReport.html',reports = reports, current_month_name = current_month_name, page = 'viewReports')
 
 @application.route('/history', methods = ['GET', 'POST'])
 def history():
@@ -409,5 +409,5 @@ def call_details(CallID):
 
 if __name__ == '__main__':
     with application.app_context():
-        #db.create_all()
+        db.create_all()
         application.run(debug=True)
