@@ -6,7 +6,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
-from config import DB_CONFIG
+from config import DB_CONFIG,ACCESSPOINT
 import pyodbc
 import json
 import boto3
@@ -199,11 +199,10 @@ def get_transcript_data(CallID):
     
     if calls:
         transcript_filename = calls[0] 
-        bucket_name = 'engelbartchatlogs1'
         transcript_key = transcript_filename
         
         try:
-            response = s3.get_object(Bucket=bucket_name, Key=transcript_key)
+            response = s3.get_object(Bucket=ACCESSPOINT, Key=transcript_key)
             transcript_data = json.loads(response['Body'].read().decode('utf-8'))
             return transcript_data
         except Exception as e:
@@ -375,8 +374,10 @@ def viewReports():
     else:
         selected_month = datetime.now().month
         reports = report_records(selected_month)
+    months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     current_month_name = calendar.month_name[selected_month]
-    return render_template('viewReport.html',reports = reports, current_month_name = current_month_name, page = 'viewReports')
+    current_month_num = months.index(current_month_name)+1
+    return render_template('viewReport.html',reports = reports, current_month_name = current_month_name, selected_month = current_month_num, page = 'viewReports')
 
 @application.route('/history', methods = ['GET', 'POST'])
 def history():
