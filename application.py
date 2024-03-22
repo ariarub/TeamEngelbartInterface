@@ -378,8 +378,10 @@ def viewReports():
     else:
         selected_month = datetime.now().month
         reports = report_records(selected_month)
+    months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     current_month_name = calendar.month_name[selected_month]
-    return render_template('viewReport.html',reports = reports, current_month_name = current_month_name, page = 'viewReports')
+    current_month_num = months.index(current_month_name)+1
+    return render_template('viewReport.html',reports = reports, current_month_name = current_month_name, selected_month = current_month_num, page = 'viewReports')
 
 @application.route('/history', methods = ['GET', 'POST'])
 def history():
