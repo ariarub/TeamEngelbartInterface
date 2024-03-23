@@ -22,14 +22,14 @@ body {
     margin: 170px auto;
 }
 
-.wrapper {
+.card {
     width: 100%;
     background: #fff;
     border-radius: 5px;
     box-shadow: 0px 4px 10px 2px rgba(0, 0, 0, 0.2);
 }
 
-.wrapper .title {
+.card .title {
     height: 90px;
     background: #00685E;
     border-radius: 5px 5px 0 0;
@@ -41,17 +41,17 @@ body {
     justify-content: center;
 }
 
-.wrapper form {
-    padding: 32px 25px 25px 25px;
+.card form {
+    padding: 31px 25px 25px 26px;
 }
 
-.wrapper form .row {
+.card form .row {
     height: 44px;
     margin-bottom: 14px;
     position: relative;
 }
 
-.wrapper form .row input {
+.card form .row input {
     height: 100%;
     width: 100%;
     outline: none;
@@ -70,7 +70,7 @@ form .row input::placeholder {
     color: #999;
 }
 
-.wrapper form .row i {
+.card form .row i {
     position: absolute;
     width: 45px;
     height: 100%;
@@ -84,21 +84,21 @@ form .row input::placeholder {
     justify-content: center;
 }
 
-.wrapper form .pass {
+.card form .pass {
     margin: -8px 0 19px 0;
 }
 
-.wrapper form .pass a {
+.card form .pass a {
     color: #00685E;
     font-size: 16px;
     text-decoration: none;
 }
 
-.wrapper form .pass a:hover {
+.card form .pass a:hover {
     text-decoration: underline;
 }
 
-.wrapper form .button input {
+.card form .button input {
     color: #fff;
     font-size: 19px;
     font-weight: 490;
@@ -112,13 +112,13 @@ form .button input:hover {
     background: #12876f;
 }
 
-.wrapper form .signup-link {
+.card form .signup-link {
     text-align: center;
-    margin-top: 19px;
+    margin-top: 20px;
     font-size: 18px;
 }
 
-.wrapper form .signup-link a{
+.card form .signup-link a{
     color: #16a085;
     text-decoration: none;
     
