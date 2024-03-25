@@ -2,18 +2,20 @@
 body{
     background: #F5F5F5;
     height: 100%; 
+    font-family: 'Barlow', sans-serif;
    }
-
    .outside-main-container {
     display: flex;
     flex-direction: row;
     height: 100%;
     min-height: 100vh;
+    font-family: 'Barlow', sans-serif;
    }
    .inside-main-container {
     display: flex;
     flex-direction: column;
-    width: 100%
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
    }
    
    #side_nav{
@@ -259,6 +261,7 @@ h1 {
     text-align: center;
     color:#000;
     margin-top: 20px;
+    font-family: 'Barlow-Bold', sans-serif;
 }
 
 td form button#call {

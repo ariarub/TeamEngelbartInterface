@@ -4,14 +4,13 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
         <link href="{{ url_for('static', filename='css/form.css') }}" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
 </head>
 
 <body>
     <div class="container">
-        <div class="wrapper">
+        <div class="card">
             <div class="title"><span>Register</span></div>
             <form method="POST" action="">
                 {{ form.hidden_tag() }}
