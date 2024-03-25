@@ -202,7 +202,7 @@ def get_transcript_data(CallID):
         transcript_key = transcript_filename
         
         try:
-            response = s3.get_object(Bucket=ACCESSPOINT, Key=transcript_key)
+            response = s3.get_object(Bucket='engelbartchatlogs1', Key=transcript_key)
             transcript_data = json.loads(response['Body'].read().decode('utf-8'))
             return transcript_data
         except Exception as e:
@@ -236,14 +236,9 @@ def count_calls_for():
         return -1  
 
 def count_issues_for():
-    # Get the current month
     current_month = datetime.now().month
-
-    # Establish a connection to the database
     conn = pyodbc.connect(connection_string)
     cursor = conn.cursor()
-
-    # Query the database to count the number of issues generated this month
     sql_query = """
         SELECT COUNT(*) AS issue_count
         FROM Issues
@@ -254,7 +249,6 @@ def count_issues_for():
     cursor.execute(sql_query, (current_month,))
     issue_count = cursor.fetchone()
     if issue_count is not None:
-        # Close the cursor and connection
         cursor.close()
         conn.close()
         return issue_count[0]
@@ -265,15 +259,6 @@ def minutes_saved():
     current_month = datetime.now().month
     conn = pyodbc.connect(connection_string)
     cursor = conn.cursor()
-    # sql_issue_count = """
-    #     SELECT COUNT(*) AS issue_count
-    #     FROM Issues
-    #     JOIN ConnectCallIssue ON Issues.IssueID = ConnectCallIssue.IssueID
-    #     JOIN Calls ON ConnectCallIssue.CallID = Calls.CallID
-    #     WHERE MONTH(Calls.CallStartTimeStamp) = ?
-    # """
-    # cursor.execute(sql_issue_count, (current_month,))
-    # issue_count = cursor.fetchone()[0]
     sql_total_duration = """
         SELECT SUM(DurationSeconds) AS total_duration
         FROM Calls
