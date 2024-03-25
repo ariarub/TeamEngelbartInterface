@@ -317,6 +317,20 @@ button[type="submit"] {
     background: #12876f;
 }
 
+.button input {
+    color: #fff;
+    font-size: 19px;
+    font-weight: 490;
+    padding-left: 0px;
+    background: #00685E;
+    border: 1px solid #00685E;
+    cursor: pointer;
+}
+
+.button input:hover {
+    background: #12876f;
+}
+
 .custom-card-deck .card {
     display: flex;
     flex-direction: column;
