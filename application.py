@@ -6,7 +6,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
-from config import DB_CONFIG,ACCESSPOINT
+from config import DB_CONFIG
 import pyodbc
 import json
 import boto3
@@ -199,10 +199,11 @@ def get_transcript_data(CallID):
     
     if calls:
         transcript_filename = calls[0] 
+        bucket_name = 'engelbartchatlogs1'
         transcript_key = transcript_filename
         
         try:
-            response = s3.get_object(Bucket='engelbartchatlogs1', Key=transcript_key)
+            response = s3.get_object(Bucket=bucket_name, Key=transcript_key)
             transcript_data = json.loads(response['Body'].read().decode('utf-8'))
             return transcript_data
         except Exception as e:
@@ -391,5 +392,4 @@ def call_details(CallID):
 
 if __name__ == '__main__':
     with application.app_context():
-        #db.create_all()
         application.run(debug=True)

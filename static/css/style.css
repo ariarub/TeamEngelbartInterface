@@ -305,3 +305,43 @@ button[type="submit"] {
     font-size: 20px; /* Adjust the font size as needed */
     font-weight: bold; /* Make the text bold */
 }
+
+.button input {
+    color: #fff;
+    font-size: 19px;
+    font-weight: 490;
+    padding-left: 0px;
+    background: #00685E;
+    border: 1px solid #00685E;
+    cursor: pointer;
+}
+
+.button input:hover {
+    background: #12876f;
+}
+
+.button input {
+    color: #fff;
+    font-size: 19px;
+    font-weight: 490;
+    padding-left: 0px;
+    background: #00685E;
+    border: 1px solid #00685E;
+    cursor: pointer;
+}
+
+.button input:hover {
+    background: #12876f;
+}
+
+.custom-card-deck .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Ensure all cards in the deck have the same height */
+}
+
+.custom-card-deck .card-body {
+    margin-bottom: 2rem; /* Adjust this value to control the distance between text and button */
+}
+
