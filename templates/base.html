@@ -35,8 +35,13 @@
         
         <div class="inside-main-container">
             <div id="navbar">
-                <div class="profile">
-                    <span class="name">{{ current_user_name }}</span>
+                <div class="dropdown">
+                    <button class="dropbtn">{{current_user_name}}
+                        <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="{{url_for('logout')}}">Log Out</a>
+                    </div>
                 </div>
             </div> 
 
@@ -45,6 +50,7 @@
             </div> 
         </div>
     </div>    
+
     <div class="main-container d-flex">
         
     </div>
