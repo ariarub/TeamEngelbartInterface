@@ -24,9 +24,15 @@ Unit tests have been implemented, to run these use the command:
 ## Authors 
 
 Aria Rub(k20012084)
+
 Jacqueline Ilie (k20071135)
+
 Ola Olatunbosun (k20064411)
+
 Edward Reamer (k20009392)
+
 Krishi Wali (k20022212)
+
 Innokentii Grigorev(k20073502)
+
 Sebastian Oleksa (k20009365)
